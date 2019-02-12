@@ -72,7 +72,7 @@ app.delete('/todos/:id', (req, res) => {
 			return res.status(404).send();
 		}
 		// If doc, send doc back with 200
-		res.send(todo);
+		res.send({todo});
 	}).catch((e) => {
 		// Error
 		// Send 400 with empty body
@@ -80,8 +80,8 @@ app.delete('/todos/:id', (req, res) => {
 	});
 });
 
-app.listen(3000, () => {
+app.listen(port, () => {
 	console.log(`Started up at port ${port}`);
 });
 
-module.exports = {port};
+module.exports = {app};
