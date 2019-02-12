@@ -7,6 +7,7 @@ var {Todo} = require('./models/todo');
 var {User} = require('./models/user');
 
 var app = express();
+const port = process.env.PORT || 3000;
 
 // bodyParser.json() returns a function that will be the middleware for express in our app.
 // With this in place, we can now send JSON to our express application.
@@ -54,8 +55,33 @@ app.get('/todos/:id', (req, res) => {
 	});
 });
 
-app.listen(3000, () => {
-	console.log('Started on port 3000');
+app.delete('/todos/:id', (req, res) => {
+	// Get the id
+	var id = req.params.id;
+
+	// Validate the ID --> not valid? return 404
+	if(!ObjectID.isValid(id)) {
+		return res.status(404).send();
+	}
+
+	// remove todo by id
+	Todo.findByIdAndRemove(id).then((todo) => {
+		// Success
+		// If no doc, send 404
+		if (!todo) {
+			return res.status(404).send();
+		}
+		// If doc, send doc back with 200
+		res.send(todo);
+	}).catch((e) => {
+		// Error
+		// Send 400 with empty body
+		res.status(400).send();
+	});
 });
 
-module.exports = {app};
+app.listen(3000, () => {
+	console.log(`Started up at port ${port}`);
+});
+
+module.exports = {port};
